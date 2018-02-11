@@ -10,13 +10,13 @@ output:
 
 First we load the data using read.csv(). It has 17,568 observations of 3 variables: steps, date, and interval.
 
-```{r}
+```{r,echo=TRUE}
 activity <- read.csv("activity/activity.csv")
 ```
 
 Now that we have the data, we can process/transform it into a format suitable for analysis. To do this, I'd like to do is turn the dates into Date objects, and the intervals into factors.
 
-```{r}
+```{r,echo=TRUE}
 activity[,2] <- as.Date(activity[,2], format="%Y-%m-%d")
 activity[,3] <- as.factor(activity[,3])
 ```
@@ -25,7 +25,7 @@ activity[,3] <- as.factor(activity[,3])
 
 To answer this question, first I will find the total number of steps taken per day.
 
-```{r}
+```{r,echo=TRUE}
 stepsPerDay <- tapply(activity[,1], activity[,2], sum, na.rm = TRUE)
 stepsPerDay
 
@@ -33,13 +33,13 @@ stepsPerDay
 
 Then I will make a histogram of the total number of steps taken per day.
 
-```{r}
+```{r,echo=TRUE}
 hist(stepsPerDay)
 ```
 
 Finally, I will calculate the mean and median of the total number of steps taken per day.
 
-```{r}
+```{r,echo=TRUE}
 mean(stepsPerDay)
 median(stepsPerDay)
 ```
@@ -48,7 +48,7 @@ median(stepsPerDay)
 
 Let's make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).
 
-```{r}
+```{r,echo=TRUE}
 avgStepsPerInterval <- tapply(activity[,1], activity[,3], mean, na.rm = TRUE)
 plot(avgStepsPerInterval, type = "l", xlab="5-minute interval", ylab="Average Number of Steps", main="Average Steps per 5-minute Interval")
 
@@ -56,7 +56,7 @@ plot(avgStepsPerInterval, type = "l", xlab="5-minute interval", ylab="Average Nu
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+```{r,echo=TRUE}
 maxSteps <- max(avgStepsPerInterval)
 which(avgStepsPerInterval == maxSteps)
 ```
@@ -67,13 +67,13 @@ So, the 104th time interval (that is not entirely NA) which corresponds to the i
 
 To understand the missing data, we can calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r}
+```{r,echo=TRUE}
 sum(is.na(activity[,1]))
 ```
 
 Now to devise a strategy for filling in all of the missing values in the dataset. I think I'll use average number of steps for that day, truncated to an integer.
 
-```{r}
+```{r,echo=TRUE}
 fillNA <- function(day){
     daySteps <- activity[activity$date==day,1]
     dayMean <- as.integer(mean(daySteps, na.rm = TRUE))
@@ -86,7 +86,7 @@ fillNA <- function(day){
 
 Create a new dataset that is equal to the original dataset but with the missing data filled in. I'll sum the NAs again to show you that they have all been replaced.
 
-```{r}
+```{r,echo=TRUE}
 for(i in seq_along(activity[,1])){
     if(is.na(activity[i,1])){
         activity[i,1] <- fillNA(activity[i,2])
@@ -97,7 +97,7 @@ sum(is.na(activity[,1]))
 
 Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
 
-```{r}
+```{r,echo=TRUE}
 stepsPerDay <- tapply(activity[,1], activity[,2], sum, na.rm = TRUE)
 hist(stepsPerDay)
 mean(stepsPerDay)
@@ -109,7 +109,7 @@ median(stepsPerDay)
 
 Create a new factor variable in the dataset with two levels - "Weekday" and "Weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r}
+```{r,echo=TRUE}
 activity$fun <- weekdays(activity$date)
 for(i in seq_along(activity$fun)){
     if(activity[i,4] == "Saturday" || activity[i,4] == "Sunday"){
@@ -125,7 +125,7 @@ summary(activity)
 
 Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
-```{r}
+```{r,echo=TRUE}
 weekendActivity <- activity[activity$fun == "Weekend",1:3]
 weekdayActivity <- activity[activity$fun == "Weekday",1:3]
 
